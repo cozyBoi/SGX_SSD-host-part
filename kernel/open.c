@@ -53,6 +53,7 @@
 typedef struct key_lba_hash_node{
     unsigned long lba;
     unsigned int fd;
+    unsigned int ret_time;
     unsigned char cmd;
     double timer;
     //	unsigned long value;
@@ -70,6 +71,7 @@ typedef struct DS_param{
     unsigned char cmd;
     unsigned long offset; //여기가 LBA영역에 들어감 6bytes
     unsigned int size; //이건 lba처럼 count영역에 들어가니, 섹터단위일듯.
+    unsigned int ret_time;
 }DS_PARAM;
 
 //DISKSHIELD Command type
@@ -1198,6 +1200,7 @@ static ssize_t enc_sync_op(struct file *filp, char __user *buf, size_t len, loff
     cur_map->lba =(*ppos)>>9;
     cur_map->fd = ds_param->fd;
     cur_map->cmd = ds_param->cmd;
+    cur_map->ret_time = ds_param->ret_time;
     
     /////table add
     //who is key?? --> LBA (offset>>9)
@@ -1326,95 +1329,6 @@ SYSCALL_DEFINE3(enc_rdafwr, char __user *, u_ds_param, char __user *, buf, size_
     mutex_unlock(&rdafwr_lock);
     return ret;
 }
-///////////
-
-//for recovery
-//This table sends recovery time to the SATA driver.
-typedef struct recovery_node{
-    unsigned long recovery_time;
-    unsigned long key;    //it is put on LBA space
-    struct hlist_node elem;
-    struct rcu_head rcu;
-}RECOVERY_HASH;
-DEFINE_HASHTABLE(recovery_hashtable, BUCKET_SIZE);
-EXPORT_SYMBOL(recovery_hashtable);
-
-spinlock_t recmap_lock[1<<BUCKET_SIZE]={ [0 ... ((1<< (BUCKET_SIZE)) - 1)] = __SPIN_LOCK_UNLOCKED(recmap_lock)};
-EXPORT_SYMBOL(recmap_lock);
-
-void rec_reclaim(struct rcu_head *rp){
-    RECOVERY_HASH *cmp = container_of(rp, RECOVERY_HASH, rcu);
-    vfree(cmp);
-}
-EXPORT_SYMBOL(rec_reclaim);
-////////////////
-
-
-//Recovery here
-SYSCALL_DEFINE5(recovery_key, unsigned int, fd, const char __user*, buf, size_t, count, unsigned int, recov_time, unsigned char*, u_ssd_name)
-{
-    
-    static struct file* filp=NULL;
-    static unsigned long int hash_key=0xffffffffffff0000;
-    struct iovec iov = { .iov_base = buf, .iov_len = count};
-    struct kiocb kiocb;
-    struct iov_iter iter;
-    RECOVERY_HASH* cur_map;
-    unsigned long flags;
-    ssize_t ret;
-    unsigned char ssd_name[20];
-    
-    printk("recovery_key");
-    //tatic char* ssd_name="/dev/sdc";
-    //    unsigned
-    //copy buffer from user
-    
-    //device file open
-    //device open
-    
-    copy_from_user(ssd_name, u_ssd_name, 10);
-    
-    if(filp==NULL){ ///first access
-        filp=filp_open(ssd_name,O_RDWR|O_DIRECT,0666);
-        if(IS_ERR(filp)){printk("%s open error!\n",ssd_name); return -1;}
-    }
-    
-    //Ready for Write
-    if(filp->f_op->write_iter)
-    {
-        //        iov = { .iov_base = buf, .iov_len = count};
-        init_sync_kiocb(&kiocb, filp);
-        //hash key is unique value to search recovery table.
-        kiocb.ki_pos = hash_key++;
-        iov_iter_init(&iter, WRITE, &iov, 1, count);
-        iter.type = WRITE;
-        
-        
-        //Insert recovery time into hash table
-        cur_map = vmalloc(sizeof(RECOVERY_HASH));
-        cur_map->key = hash_key;
-        cur_map->recovery_time = recov_time;
-        
-        spin_lock_irqsave(&recmap_lock[hash_min(cur_map->key, HASH_BITS(recovery_hashtable)) ],flags );
-        hash_add_rcu(recovery_hashtable,&(cur_map->elem),cur_map->key);
-        spin_unlock_irqrestore(&recmap_lock[hash_min(cur_map->key, HASH_BITS(recovery_hashtable)) ],flags );
-        
-        //write call
-        ret = call_write_iter(filp, &kiocb, &iter);
-        BUG_ON(ret == -EIOCBQUEUED);
-        
-        /////table delete
-        spin_lock_irqsave(&recmap_lock[hash_min(cur_map->key, HASH_BITS(recovery_hashtable)) ],flags );
-        hash_del_rcu(&(cur_map->elem));
-        spin_unlock_irqrestore(&recmap_lock[hash_min(cur_map->key, HASH_BITS(recovery_hashtable)) ],flags );
-        call_rcu(&(cur_map->rcu),rec_reclaim);
-        
-    }
-    
-    return ret;
-    
-}
-
 
 SYSCALL_DEFINE3(open, const char __user *, filename, int, flags, umode_t, mode)
 {

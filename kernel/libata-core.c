@@ -133,26 +133,11 @@ static char ata_force_param_buf[PAGE_SIZE] __initdata;
 //This code should be modified!
 #define BUCKET_SIZE 10
 
-
-//recovery node
-typedef struct recovery_node{
-    unsigned long recovery_time;
-    unsigned long key;    //it is put on LBA space
-    struct hlist_node elem;
-    struct rcu_head rcu;
-}RECOVERY_HASH;
-
-extern struct hlist_head recovery_hashtable[1<<BUCKET_SIZE];
-extern spinlock_t recmap_lock[1<<BUCKET_SIZE];
-
-extern void rec_reclaim(struct rcu_head *rp);
-
-//////
-
 typedef struct key_lba_hash_node{
     unsigned long lba;
     unsigned int fd;
     unsigned char cmd;
+    unsigned int ret_time;
     double timer;
     //	unsigned long value;
     //	unsigned int call;
@@ -620,6 +605,7 @@ int atapi_cmd_type(u8 opcode)
 void ata_tf_to_fis(const struct ata_taskfile *tf, u8 pmp, int is_cmd, u8 *fis)
 {
     KEY_LBA_HASH* cur_map=NULL;
+    RECOVERY_HASH* rec_map=NULL;
     unsigned long DS_lba;
     char lba_chk=0;
     //	unsigned long value;
@@ -669,12 +655,14 @@ void ata_tf_to_fis(const struct ata_taskfile *tf, u8 pmp, int is_cmd, u8 *fis)
         //		printk("32b");
         DS_lba=fis[4] | (fis[5]<<8) | (fis[6]<<16) | ((fis[7]&15)<<24);
     }
+    unsigned int recovery_time = 0;
     if((fis[7]>>4)==0xe){
         rcu_read_lock();
         hash_for_each_possible_rcu(key_lba_hashtable,cur_map,elem,DS_lba){
             if(cur_map->lba==DS_lba){
                 //	lba_chk=1; value=cur_map->value; call=cur_map->call; break;
                 lba_chk=1; fd=cur_map->fd; cmd=cur_map->cmd;
+                recovery_time = cur_map->recovery_time;
                 //double kernel_t;
                 //struct timerspec kernel_clk;
                 //clock_gettime(CLOCK_MONOTONIC, &kernel_clk);
@@ -683,17 +671,6 @@ void ata_tf_to_fis(const struct ata_taskfile *tf, u8 pmp, int is_cmd, u8 *fis)
                 break;
             }
         }
-        rcu_read_unlock();
-        
-        int rec_chk = 0, recovery_time = 0;
-        
-        rcu_read_lock();
-        hash_for_each_possible_rcu(recovery_hashtable,rec_map,elem,key){
-            if(rec_map->key==lba){
-                rec_chk=1; recovery_time=rec_map->recovery_time; break;
-            }
-        }
-        rcu_read_unlock();
         
         //put the parameter to the fis
         if(lba_chk || rec_chk){ //DS의 write

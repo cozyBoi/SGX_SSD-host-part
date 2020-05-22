@@ -21,6 +21,7 @@ typedef struct DS_param{
     unsigned char cmd;
     unsigned long offset; //여기가 LBA영역에 들어감 6bytes
     unsigned int size; //이건 lba처럼 count영역에 들어가니, 섹터단위일듯.
+    unsigned int ret_time;
 }DS_PARAM;
 
 enum ds_cmd{
