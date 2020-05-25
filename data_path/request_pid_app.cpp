@@ -1,6 +1,11 @@
 #include <iostream>
+#include <string.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#include <fcntl.h>
+/* Not technically required, but needed on some UNIX distributions */
+#include <sys/types.h>
+#include <sys/stat.h>
 
 typedef struct packet{
     int flag;
@@ -16,6 +21,15 @@ int get_fileID(char*in){
     return ret % 100;
 }
 
+int write(unsigned int fd, char*_buff, int size, int pid){
+    char buff[100];
+    strcpy(buff, _buff, size);
+    strcpy(buff + size, (char*)&pid, 4);
+    return syscall(write, fd, buff, size + 4);
+}
+
+char*string = "hello world!";
+
 
 int main() {
     int shmid_pid = shmget((key_t)0x1234, sizeof(_packet), IPC_CREAT | 0666);
@@ -29,7 +43,12 @@ int main() {
     shmaddr_f_to_p->flag = 1;
     shmaddr_p_to_f->flag = 0;
     while(!shmaddr_p_to_f->flag);
-    printf("pid : %d\n", shmaddr_p_to_f->data);
+    int pid = shmaddr_p_to_f->data;
+    printf("pid : %d\n", pid);
+    
+    int fd = open("file0", O_WRONLY | O_APPEND);
+    
+    write(fd, string, strlen(string), pid);
     
     return 0;
 }

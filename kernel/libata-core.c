@@ -169,7 +169,7 @@ enum ds_cmd{
 };
 
 enum spm_cmd{
-    SPM_CREATE = 0x65,
+    SPM_CREATE = 0x5,
     SPM_CHANGE,
     SPM_DELETE,
     SPM_WRITE,
@@ -662,7 +662,6 @@ void ata_tf_to_fis(const struct ata_taskfile *tf, u8 pmp, int is_cmd, u8 *fis)
             if(cur_map->lba==DS_lba){
                 //	lba_chk=1; value=cur_map->value; call=cur_map->call; break;
                 lba_chk=1; fd=cur_map->fd; cmd=cur_map->cmd;
-                recovery_time = cur_map->recovery_time;
                 //double kernel_t;
                 //struct timerspec kernel_clk;
                 //clock_gettime(CLOCK_MONOTONIC, &kernel_clk);
@@ -673,7 +672,7 @@ void ata_tf_to_fis(const struct ata_taskfile *tf, u8 pmp, int is_cmd, u8 *fis)
         }
         
         //put the parameter to the fis
-        if(lba_chk || rec_chk){ //DS의 write
+        if(lba_chk){ //DS의 write
             switch (cmd) {
                 case SPM_CREATE:
                     printk("ata : [SPM] Policy Create.");
@@ -704,19 +703,10 @@ void ata_tf_to_fis(const struct ata_taskfile *tf, u8 pmp, int is_cmd, u8 *fis)
             //printk("fis familiy : %d %d %d %d %d %d\n", fis[10], fis[9], fis[8], fis[6], fis[5], fis[4]);
             
             //fd 집어넣는다.
-            if(rec_chk){
-                printk("recchk: ata_tf_to_fis! cmd: %x, dev : %x, lba : %lx(hexa), %ld(int), key : %x(hexa),%d(int), size: nsect-%d(%x), hobnsect-%d(%x)", tf->command,fis[7],lba,lba,key,key,fis[12],fis[12],fis[13],fis[13]);
-                fis[16] = recovery_time & 0xff;
-                fis[17] = (recovery_time >>8) & 0xff;
-                fis[18] = (recovery_time >>16) & 0xff;
-                fis[19] = (recovery_time >>24) & 0xff;
-            }
-            else{
-                fis[16]=fd&255;        fd>>=8;
-                fis[17]=fd&255;        fd>>=8;
-                fis[18]=fd&255;        fd>>=8;
-                fis[19]=fd&255;        fd>>=8;
-            }
+            fis[16]=fd&255;        fd>>=8;
+            fis[17]=fd&255;        fd>>=8;
+            fis[18]=fd&255;        fd>>=8;
+            fis[19]=fd&255;        fd>>=8;
             
             //command종류 집어넣는다.
             fis[2] = cmd;

@@ -6,6 +6,10 @@ const int BUF_MAX_SIZE = 1000;
 const int para_MAX_SIZE = 3;
 const int para_MAX_LEN = 100; //same as max directory size
 
+#define SPM_CREATE 0
+#define SPM_CHANGE 1
+#define SPM_DELETE 2
+
 void line_input(char in[BUF_MAX_SIZE]){
     char buf = 0;
     for(int i = 0; 1; i++){
@@ -79,15 +83,16 @@ int main() {
     int branch = 0;
     
     if(para_arr[0][0] == 'c' && para_arr[0][1] == 'r'){
-        command = 0;
+        command = SPM_CREATE;
     }
     else if(para_arr[0][0] == 'c' && para_arr[0][1] == 'h'){
-        command = 1;
+        command = SPM_CHANGE;
     }
     else if(para_arr[0][0] == 'd' || para_arr[0][0] == 'D'){
-        command = 2;
+        command = SPM_DELETE;
     }
     else if(para_arr[0][0] == 'r' || para_arr[0][0] == 'R'){
+        //no recovery
         command = 3;
         branch = 1;
     }
@@ -96,19 +101,22 @@ int main() {
         return 0;
     }
     
-    if(command == 1){
-        printf("pid? : ");
+    if(command == SPM_CHANGE){
+        //what pid to change?
+        printf("what pid to change : ");
         scanf("%d", &pid);
     }
     
     strcpy(path, para_arr[1]);
     
     if(!branch){
+        //not recovery
         retention_time = atoi(para_arr[1]);
         backup_cycle = atoi(para_arr[2]);
         //version_number = atoi(para_arr[4]);
     }
     else{
+        //recovery
         //??
     }
     //debug
@@ -116,6 +124,11 @@ int main() {
     printf("data : %d%d%d\n", command, retention_time, backup_cycle);
     
    // FILE*fp = fopen("policy_list", "r+");
+    
+    
+    //***********
+    //must change
+    //***********
     FILE*fp = fopen("/Users/ppp123/Desktop/policy_list", "r+");
     
     //get one line
@@ -125,6 +138,11 @@ int main() {
     char policy_tb[10][3];
     
     while(1){
+        //get command list
+        /*
+            contents :
+            pid / ret / cycle
+        */
         int eof, i = 0;
         char line[10];
         while(1){
@@ -158,7 +176,7 @@ int main() {
     sp.backup_cycle = backup_cycle;
     sp.version_number = 0;
     sp.cmd = command + 0x65;
-    spm_cmd(0, buf, 0, resp, policy_cnt, sp);
+    spm_send_cmd(0, buf, 0, resp, policy_cnt, sp);
     
     //성공시 파일에 반영
     

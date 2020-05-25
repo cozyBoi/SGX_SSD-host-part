@@ -30,7 +30,7 @@ enum ds_cmd{
     DS_OPEN_WR = 0x45,
     DS_CLOSE_WR = 0x46,
     DS_REMOVE_WR = 0x47,
-    DS_WRITE_WR = 0x48,
+    DS_RITE_WR = 0x48,
     DS_WR_RANGE_MAX = 0x49,
     DS_RD_RANGE_MIN = 0x4A,
     DS_READ_RD = 0x4B,
@@ -44,7 +44,7 @@ enum ds_cmd{
 };
 
 enum spm_cmd{
-    SPM_CREATE = 0x65,
+    SPM_CREATE = 0x5,
     SPM_CHANGE,
     SPM_DELETE,
     SPM_WRITE,
@@ -60,4 +60,4 @@ typedef struct SPM_PARAM{
 
 int enc_rdafwr(DS_PARAM *ds_param, char* u_buf, char* response, int count);
 
-int spm_cmd(int fd, char* buffer, int node_size, char* response, int pid, spm_param*sp);
+int spm_send_cmd(int fd, char* buffer, int node_size, char* response, int pid, spm_param*sp);
