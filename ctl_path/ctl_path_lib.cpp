@@ -65,7 +65,7 @@ int spm_send_cmd(int fd, char* buffer, int node_size, char* response, int pid, s
     char *u_buf_ = (char*) malloc (sizeof(char)*(IO_SIZE + SECTOR_SIZE));    //IO_SIZE??
     char *u_buf = (char*) ((((unsigned long)u_buf_ + SECTOR_SIZE -1 ) >> SECTOR_BIT) << SECTOR_BIT);
     
-    ds_param->cmd = sp->cmd;
+    int cmd = ds_param->cmd = sp->cmd;
     ds_param->fd = fd;
     ds_param->offset = offset;
     
@@ -83,7 +83,8 @@ int spm_send_cmd(int fd, char* buffer, int node_size, char* response, int pid, s
     //cmd는 register fis로 보낼거
     switch (cmd) {
         case SPM_CREATE:
-            memcpy((char*)(u_buf+file_size), (char*)(&sp->pid), 4);
+            //memcpy((char*)(u_buf+file_size), (char*)(&sp->pid), 4);
+            memcpy((char*)(u_buf+file_size), (char*)(pid), 4);
             memcpy((char*)(u_buf+file_size+4), (char*)(&sp->ret_time), 4);
             memcpy((char*)(u_buf+file_size+8), (char*)(&sp->backup_cycle), 4);
             memcpy((char*)(u_buf+file_size+12), (char*)(&sp->version_num), 4);
@@ -98,7 +99,8 @@ int spm_send_cmd(int fd, char* buffer, int node_size, char* response, int pid, s
             break;
         case SPM_CHANGE:
             //pid의 정책이 파라미터들로 바뀜
-            memcpy((char*)(u_buf+file_size), (char*)(&sp->pid), 4);
+            //memcpy((char*)(u_buf+file_size), (char*)(&sp->pid), 4);
+            memcpy((char*)(u_buf+file_size), (char*)(pid), 4);
             memcpy((char*)(u_buf+file_size+4), (char*)(&sp->ret_time), 4);
             memcpy((char*)(u_buf+file_size+8), (char*)(&sp->backup_cycle), 4);
             

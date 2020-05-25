@@ -1,7 +1,8 @@
-APP = spm
-
-spm: spm.cpp ctl_path_lib.o
-	g++ -o spm.cpp ctl_path_lib.o
+spm: spm.o ctl_path_lib.o
+	g++ -o spm.o ctl_path_lib.o
 
 ctl_path_lib.o: ctl_path_lib.cpp
 	g++ -c ctl_path_lib.cpp
+
+spm.o: spm.cpp
+	g++ -c spm.cpp
