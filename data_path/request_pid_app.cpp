@@ -24,12 +24,12 @@ int get_fileID(char*in){
     return ret % 100;
 }
 
-size_t write(unsigned int fd, char*_buff, int size, int pid){
+size_t _write(unsigned int fd, char*_buff, int size, int pid){
     char buff[100];
     strncpy(buff, _buff, size);
     strncpy(buff + size, (char*)&pid, 4);
     size_t ssize = size + 4;
-    return syscall(write, fd, buff, ssize);
+    return write(fd, buff, ssize);
 }
 
 char*string = "hello world!";
@@ -52,7 +52,7 @@ int main() {
     
     int fd = open("file0", O_WRONLY | O_APPEND);
     
-    write(fd, string, strlen(string), pid);
+    _write(fd, string, strlen(string), pid);
     
     return 0;
 }
