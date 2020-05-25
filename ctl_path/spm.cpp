@@ -10,6 +10,8 @@ const int para_MAX_LEN = 100; //same as max directory size
 #define SPM_CHANGE 1
 #define SPM_DELETE 2
 
+#define POLICY_LIST "/home/jeewon/Desktop/policy_list"
+
 void line_input(char in[BUF_MAX_SIZE]){
     char buf = 0;
     for(int i = 0; 1; i++){
@@ -129,7 +131,7 @@ int main() {
     //***********
     //must change
     //***********
-    FILE*fp = fopen("/Users/ppp123/Desktop/policy_list", "r+");
+    FILE*fp = fopen(POLICY_LIST, "r+");
     
     //get one line
     
@@ -181,7 +183,7 @@ int main() {
     //성공시 파일에 반영
     
     //fp = fopen("policy_list", "w");
-    fp = fopen("/Users/ppp123/Desktop/policy_list", "w");
+    fp = fopen(POLICY_LIST, "w");
     
     for(int i = 0; i < policy_cnt; i++){
         if(command == 1 && policy_tb[policy_cnt][0] == pid){

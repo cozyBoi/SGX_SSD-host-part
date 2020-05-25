@@ -10,6 +10,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#define FILE_PATH "/home/jeewon/Desktop/file0"
+
 typedef struct packet{
     int flag;
     int data;
@@ -42,7 +44,7 @@ int main() {
     int shmid_fid = shmget((key_t)0x1235, sizeof(_packet), IPC_CREAT | 0666);
     _packet*shmaddr_p_to_f = (_packet*)shmat(shmid_fid, NULL, 0);
     
-    char*in = "file0";
+    char*in = FILE_PATH;
     shmaddr_f_to_p->data = get_fileID(in);
     shmaddr_f_to_p->flag = 1;
     shmaddr_p_to_f->flag = 0;
@@ -50,7 +52,7 @@ int main() {
     int pid = shmaddr_p_to_f->data;
     printf("pid : %d\n", pid);
     
-    int fd = open("file0", O_WRONLY | O_APPEND);
+    int fd = open(FILE_PATH, O_WRONLY | O_APPEND);
     
     _write(fd, string, strlen(string), pid);
     

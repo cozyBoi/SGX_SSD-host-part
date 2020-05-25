@@ -3,9 +3,13 @@
 #include <sys/shm.h>
 #include <map>
 
+#define POLICY_LIST "/home/jeewon/Desktop/policy_list"
+#define POLICY_MAP_FILE "/home/jeewon/Desktop/policy_file_mapping"
 const int BUF_MAX_SIZE = 1000;
 const int para_MAX_SIZE = 3;
 const int para_MAX_LEN = 100; //same as max directory size
+
+
 
 typedef struct packet{
     int flag;
@@ -28,7 +32,7 @@ int get_fileID(char*in){
 }
 
 int main() {
-    FILE*fp = fopen("/Users/ppp123/Desktop/policy_list", "r+");
+    FILE*fp = fopen(POLICY_LIST, "r+");
     if(fp == NULL){
         printf("There is no policy file\n");
         return 0;
@@ -67,7 +71,7 @@ int main() {
     fclose(fp);
     
     std::map<int, int> m;
-    fp = fopen("/Users/ppp123/Desktop/policy_file_mapping", "r");
+    fp = fopen(POLICY_MAP_FILE, "r");
     while(1){
         int eof, FID, PID;
         eof = fscanf(fp, "%d %d\n", &FID, &PID);
@@ -109,7 +113,7 @@ int main() {
         }
     }
     
-    fp = fopen("/Users/ppp123/Desktop/policy_file_mapping", "w");
+    fp = fopen(POLICY_MAP_FILE, "w");
     std::map<int, int>::iterator iter;
     for(iter = m.begin(); iter != m.end() ; iter++){
         fprintf(fp, "%d %d\n",iter->first, iter->second);
