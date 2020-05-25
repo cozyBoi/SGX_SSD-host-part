@@ -174,9 +174,9 @@ int main() {
     spm_param sp;
     sp.ret_time = retention_time;
     sp.backup_cycle = backup_cycle;
-    sp.version_number = 0;
+    sp.version_num = 0;
     sp.cmd = command + 0x65;
-    spm_send_cmd(0, buf, 0, resp, policy_cnt, sp);
+    spm_send_cmd(0, buf, 0, resp, policy_cnt, &sp);
     
     //성공시 파일에 반영
     
