@@ -3,6 +3,8 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <fcntl.h>
+#include <unistd.h>
+#include <sys/syscall.h> 
 /* Not technically required, but needed on some UNIX distributions */
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -23,8 +25,8 @@ int get_fileID(char*in){
 
 int write(unsigned int fd, char*_buff, int size, int pid){
     char buff[100];
-    strcpy(buff, _buff, size);
-    strcpy(buff + size, (char*)&pid, 4);
+    strncpy(buff, _buff, size);
+    strncpy(buff + size, (char*)&pid, 4);
     return syscall(write, fd, buff, size + 4);
 }
 
