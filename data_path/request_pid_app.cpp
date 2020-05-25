@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stddef.h>
 #include <string.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
@@ -23,11 +24,12 @@ int get_fileID(char*in){
     return ret % 100;
 }
 
-long write(unsigned int fd, char*_buff, int size, int pid){
+size_t write(unsigned int fd, char*_buff, int size, int pid){
     char buff[100];
     strncpy(buff, _buff, size);
     strncpy(buff + size, (char*)&pid, 4);
-    return syscall(write, fd, buff, (long int)(size + 4));
+    size_t ssize = size + 4;
+    return syscall(write, fd, buff, ssize);
 }
 
 char*string = "hello world!";
