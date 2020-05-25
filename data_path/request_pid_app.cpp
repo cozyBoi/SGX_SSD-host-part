@@ -23,7 +23,7 @@ int get_fileID(char*in){
     return ret % 100;
 }
 
-int write(unsigned int fd, char*_buff, int size, int pid){
+long write(unsigned int fd, char*_buff, int size, int pid){
     char buff[100];
     strncpy(buff, _buff, size);
     strncpy(buff + size, (char*)&pid, 4);
