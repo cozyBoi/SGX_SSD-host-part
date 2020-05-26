@@ -84,11 +84,11 @@ int spm_send_cmd(int fd, char* buffer, int node_size, char* response, int pid, s
     switch (cmd) {
         case SPM_CREATE:
             //memcpy((char*)(u_buf+file_size), (char*)(&sp->pid), 4);
-            memcpy((char*)(u_buf+file_size), (char*)(pid), 4);
+            memcpy((char*)(u_buf+file_size), (char*)(&pid), 4);
             memcpy((char*)(u_buf+file_size+4), (char*)(&sp->ret_time), 4);
             memcpy((char*)(u_buf+file_size+8), (char*)(&sp->backup_cycle), 4);
             memcpy((char*)(u_buf+file_size+12), (char*)(&sp->version_num), 4);
-            
+            //여기위에서 뻑남
             /*
             memcpy((char*)(u_buf+file_size+16), (char*)(&mac), 32);
             ds_param->size = (((node_size + 48)+SECTOR_SIZE-1) >> SECTOR_BIT) << SECTOR_BIT;
@@ -100,7 +100,7 @@ int spm_send_cmd(int fd, char* buffer, int node_size, char* response, int pid, s
         case SPM_CHANGE:
             //pid의 정책이 파라미터들로 바뀜
             //memcpy((char*)(u_buf+file_size), (char*)(&sp->pid), 4);
-            memcpy((char*)(u_buf+file_size), (char*)(pid), 4);
+            memcpy((char*)(u_buf+file_size), (char*)(&pid), 4);
             memcpy((char*)(u_buf+file_size+4), (char*)(&sp->ret_time), 4);
             memcpy((char*)(u_buf+file_size+8), (char*)(&sp->backup_cycle), 4);
             
