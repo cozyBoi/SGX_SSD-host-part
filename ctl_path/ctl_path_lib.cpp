@@ -114,7 +114,7 @@ int spm_send_cmd(int fd, char* buffer, int node_size, char* response, int pid, s
             break;
         default:
             printf("[APP] Invalid SPM command\n");
-            return 0;
+            return -1;
             break;
     }
     

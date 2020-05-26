@@ -6,9 +6,9 @@ const int BUF_MAX_SIZE = 1000;
 const int para_MAX_SIZE = 3;
 const int para_MAX_LEN = 100; //same as max directory size
 
-#define SPM_CREATE 0
-#define SPM_CHANGE 1
-#define SPM_DELETE 2
+#define SPM_CREATE 0x5
+#define SPM_CHANGE 0x6
+#define SPM_DELETE 0x7
 
 #define POLICY_LIST "/home/jeewon/Desktop/policy_list"
 
@@ -177,8 +177,11 @@ int main() {
     sp.ret_time = retention_time;
     sp.backup_cycle = backup_cycle;
     sp.version_num = 0;
-    sp.cmd = command + 0x65;
-    spm_send_cmd(0, buf, 0, resp, policy_cnt, &sp);
+    sp.cmd = command;
+    if(spm_send_cmd(0, buf, 0, resp, policy_cnt, &sp) == -1){
+        printf("[spm] error command didn't reach to ssd");
+        return 0;
+    }
     
     //성공시 파일에 반영
     
