@@ -24,6 +24,7 @@
 #include<stdlib.h>
 
 #include "ctl_path_lib.h"
+#include "KISA_SEED_CMAC.h"
 //#include<dumpcode.h>
 
 
@@ -61,7 +62,6 @@ int spm_send_cmd(int fd, char* buffer, int node_size, char* response, int pid, s
     uint32_t file_size = node_size;
     uint32_t reserved;
     DS_PARAM *ds_param = (DS_PARAM*) malloc (sizeof(DS_PARAM));
-    int mac = 9999;
     char *u_buf_ = (char*) malloc (sizeof(char)*(IO_SIZE + SECTOR_SIZE));    //IO_SIZE??
     char *u_buf = (char*) ((((unsigned long)u_buf_ + SECTOR_SIZE -1 ) >> SECTOR_BIT) << SECTOR_BIT);
     
@@ -81,6 +81,30 @@ int spm_send_cmd(int fd, char* buffer, int node_size, char* response, int pid, s
     }
     
     //cmd는 register fis로 보낼거
+    
+    unsigned char key[160] = { 0x00, };
+    unsigned char in[200] = { 0x00, };
+    unsigned char mac[160] = { 0x00, };
+    int keyLen = 0, inLen = 0, macLen = 0;
+
+    //print_title("Test SEED CMAC - 1");
+
+    keyLen = asc2hex(key, "CAEE9E66F060D74BDA1C7636F765FFB5");
+    inLen = asc2hex(in, "");
+
+    macLen = 8;
+
+    print_result("SEED Generate_CMAC", SEED_Generate_CMAC(mac, macLen, in, inLen, key));
+
+    
+    //print_hex("key", key, keyLen);
+    //print_hex("in", in, inLen);
+    //print_hex("mac", mac, macLen);
+    //printf("\n");
+
+    //print_result("SEED Verify_CMAC", SEED_Verify_CMAC(mac, macLen, in, inLen, key));
+
+    char after_enc[100] = {0, };
     switch (cmd) {
         case SPM_CREATE:
             //memcpy((char*)(u_buf+file_size), (char*)(&sp->pid), 4);
@@ -94,8 +118,15 @@ int spm_send_cmd(int fd, char* buffer, int node_size, char* response, int pid, s
             ds_param->size = (((node_size + 48)+SECTOR_SIZE-1) >> SECTOR_BIT) << SECTOR_BIT;
             */
             
-            memcpy((char*)(u_buf+file_size+16), (char*)(&mac), 4);
-            ds_param->size = (((node_size + 20)+SECTOR_SIZE-1) >> SECTOR_BIT) << SECTOR_BIT;
+            SHA256_Encrpyt(u_buf, 12, after_enc);
+            
+            keyLen = asc2hex(key, "CAEE9E66F060D74BDA1C7636F765FFB5");
+            inLen = asc2hex(in, "123456789012"); //12바이트
+            macLen = 8;
+            print_result("SEED Generate_CMAC", SEED_Generate_CMAC(mac, macLen, in, inLen, key));
+            
+            //memcpy((char*)(u_buf+file_size+16), (char*)(&mac), 4);
+            ds_param->size = (((node_size + 16)+SECTOR_SIZE-1) >> SECTOR_BIT) << SECTOR_BIT;
             break;
         case SPM_CHANGE:
             //pid의 정책이 파라미터들로 바뀜
@@ -109,8 +140,15 @@ int spm_send_cmd(int fd, char* buffer, int node_size, char* response, int pid, s
             ds_param->size = (((node_size + 48)+SECTOR_SIZE-1) >> SECTOR_BIT) << SECTOR_BIT;
             */
             
-            memcpy((char*)(u_buf+file_size+16), (char*)(&mac), 4);
-            ds_param->size = (((node_size + 20)+SECTOR_SIZE-1) >> SECTOR_BIT) << SECTOR_BIT;
+            SHA256_Encrpyt(u_buf, 12, after_enc);
+            
+            keyLen = asc2hex(key, "CAEE9E66F060D74BDA1C7636F765FFB5");
+            inLen = asc2hex(in, "123456789012"); //12바이트
+            macLen = 8;
+            print_result("SEED Generate_CMAC", SEED_Generate_CMAC(mac, macLen, in, inLen, key));
+            
+            //memcpy((char*)(u_buf+file_size+16), (char*)(&mac), 4);
+            ds_param->size = (((node_size + 16)+SECTOR_SIZE-1) >> SECTOR_BIT) << SECTOR_BIT;
             break;
         default:
             printf("[APP] Invalid SPM command\n");
@@ -122,4 +160,30 @@ int spm_send_cmd(int fd, char* buffer, int node_size, char* response, int pid, s
     free(u_buf_);
     free(ds_param);
     return 0;
+}
+
+int asc2hex(unsigned char *dst, const char *src)
+{
+    unsigned char temp = 0x00;
+    int i = 0;
+
+    while (src[i] != 0x00)
+    {
+        temp = 0x00;
+
+        if ((src[i] >= 0x30) && (src[i] <= 0x39))
+            temp = src[i] - '0';
+        else if ((src[i] >= 0x41) && (src[i] <= 0x5A))
+            temp = src[i] - 'A' + 10;
+        else if ((src[i] >= 0x61) && (src[i] <= 0x7A))
+            temp = src[i] - 'a' + 10;
+        else
+            temp = 0x00;
+
+        (i & 1) ? (dst[i >> 1] ^= temp & 0x0F) : (dst[i >> 1] = 0, dst[i >> 1] = temp << 4);
+
+        i++;
+    }
+
+    return ((i + 1) / 2);
 }
