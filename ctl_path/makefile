@@ -7,10 +7,10 @@ ctl_path_lib.o: ctl_path_lib.cpp
 	g++ -c ctl_path_lib.cpp
 
 KISA_SEED_CMAC.o : KISA_SEED_CMAC.c
-	g++ -c KISA_SEED_CMAC.c
+	gcc -c KISA_SEED_CMAC.c
 
 KISA_SHA256.o : KISA_SHA256.c
-	g++ -c KISA_SHA256.c
+	gcc -c KISA_SHA256.c
 
 clean:
 	rm -rf spm ctl_path_lib.o
