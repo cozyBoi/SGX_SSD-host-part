@@ -514,3 +514,41 @@ int SEED_Verify_CMAC(unsigned char *pMAC, int macLen, unsigned char *pIn, int in
 }
 
 
+void print_title(const char *title)
+{
+    printf("================================================\n");
+    printf("  %s\n", title);
+    printf("================================================\n");
+}
+
+void print_hex(const char *valName, const unsigned char *data, const int dataLen)
+{
+    int i = 0;
+
+    printf("%s [%dbyte] :", valName, dataLen);
+    for (i = 0; i < dataLen; i++)
+    {
+        if (!(i & 0x0F))
+            printf("\n");
+        printf(" %02X", data[i]);
+    }
+    printf("\n");
+}
+
+void print_result(const char *func, int ret)
+{
+    if (ret)
+    {
+        printf("================================================\n");
+        printf("  %s Failure!\n", func);
+        printf("================================================\n");
+
+        exit(0);
+    }
+    else
+    {
+        printf("================================================\n");
+        printf("  %s Success!\n", func);
+        printf("================================================\n");
+    }
+}

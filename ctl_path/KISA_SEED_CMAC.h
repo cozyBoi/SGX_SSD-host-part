@@ -15,6 +15,9 @@ void Word2Byte(unsigned char *dst, const unsigned int *src, const int srcLen);
 void SEED_CMAC_SubkeySched(unsigned char *sKey);
 int SEED_Generate_CMAC(unsigned char *pMAC, int macLen, unsigned char *pIn, int inLen, unsigned char *mKey);
 int SEED_Verify_CMAC(unsigned char *pMAC, int macLen, unsigned char *pIn, int inLen, unsigned char *mKey);
+void print_title(const char *title);
+void print_hex(const char *valName, const unsigned char *data, const int dataLen);
+void print_result(const char *func, int ret);
 #ifdef __cplusplus
 }
 #endif

@@ -206,3 +206,5 @@ void SHA256_Encrpyt( IN const BYTE *pszMessage, IN UINT uPlainTextLen, OUT BYTE 
 
 	SHA256_Close( &info, pszDigest );
 }
+
+
