@@ -1,4 +1,4 @@
-#include "KISA_SEED.h"
+#include "KISA_SEED_CMAC.h"
 
 
 #define KC0     0x9e3779b9UL
