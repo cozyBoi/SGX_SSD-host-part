@@ -47,7 +47,6 @@ enum spm_cmd{
     SPM_CREATE = 0x65,
     SPM_CHANGE,
     SPM_DELETE,
-    SPM_WRITE,
     SPM_RECOVERY
 };
 
