@@ -34,7 +34,7 @@ extern "C" {
 #else
 	#if 0
 		#define BIG_ENDIAN
-	#elif defined(_MSC_VER)
+	#elif 1
 		#define LITTLE_ENDIAN
 	#else
 		#error

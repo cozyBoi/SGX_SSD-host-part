@@ -105,7 +105,7 @@ int spm_send_cmd(int fd, char* buffer, int node_size, char* response, int pid, s
 
     //print_result("SEED Verify_CMAC", SEED_Verify_CMAC(mac, macLen, in, inLen, key));
 
-    char after_enc[100] = {0, };
+    unsigned char after_enc[100] = {0, };
     switch (cmd) {
         case SPM_CREATE:
             //memcpy((char*)(u_buf+file_size), (char*)(&sp->pid), 4);
@@ -119,7 +119,7 @@ int spm_send_cmd(int fd, char* buffer, int node_size, char* response, int pid, s
             ds_param->size = (((node_size + 48)+SECTOR_SIZE-1) >> SECTOR_BIT) << SECTOR_BIT;
             */
             
-            SHA256_Encrpyt(u_buf, 12, after_enc);
+            SHA256_Encrpyt((unsigned char*)u_buf, 12, after_enc);
             
             keyLen = asc2hex(key, "CAEE9E66F060D74BDA1C7636F765FFB5");
             inLen = asc2hex(in, "123456789012"); //12바이트
@@ -141,7 +141,7 @@ int spm_send_cmd(int fd, char* buffer, int node_size, char* response, int pid, s
             ds_param->size = (((node_size + 48)+SECTOR_SIZE-1) >> SECTOR_BIT) << SECTOR_BIT;
             */
             
-            SHA256_Encrpyt(u_buf, 12, after_enc);
+            SHA256_Encrpyt((unsigned char*)u_buf, 12, after_enc);
             
             keyLen = asc2hex(key, "CAEE9E66F060D74BDA1C7636F765FFB5");
             inLen = asc2hex(in, "123456789012"); //12바이트
