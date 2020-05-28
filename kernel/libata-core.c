@@ -605,7 +605,7 @@ int atapi_cmd_type(u8 opcode)
 void ata_tf_to_fis(const struct ata_taskfile *tf, u8 pmp, int is_cmd, u8 *fis)
 {
     KEY_LBA_HASH* cur_map=NULL;
-    RECOVERY_HASH* rec_map=NULL;
+    //RECOVERY_HASH* rec_map=NULL;
     unsigned long DS_lba;
     char lba_chk=0;
     //	unsigned long value;
