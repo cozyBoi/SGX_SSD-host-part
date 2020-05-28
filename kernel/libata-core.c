@@ -679,9 +679,6 @@ void ata_tf_to_fis(const struct ata_taskfile *tf, u8 pmp, int is_cmd, u8 *fis)
                 case SPM_CHANGE:
                     printk("ata : [SPM] Policy Change.");
                     break;
-                case SPM_WRITE:
-                    printk("ata : [SPM] Policy Write.");
-                    break;
                 case SPM_RECOVERY:
                     printk("ata : [SPM] Policy Recovery.");
                     break;

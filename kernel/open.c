@@ -1301,9 +1301,6 @@ SYSCALL_DEFINE3(enc_rdafwr, char __user *, u_ds_param, char __user *, buf, size_
         case SPM_CHANGE:
             printk("open : [SPM] Policy Change.");
             break;
-        case SPM_WRITE:
-            printk("open : [SPM] Policy Write.");
-            break;
         case SPM_RECOVERY:
             printk("open : [SPM] Policy Recovery.");
             break;
