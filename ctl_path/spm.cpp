@@ -6,9 +6,9 @@ const int BUF_MAX_SIZE = 1000;
 const int para_MAX_SIZE = 3;
 const int para_MAX_LEN = 100; //same as max directory size
 
-#define SPM_CREATE 0x5
-#define SPM_CHANGE 0x6
-#define SPM_DELETE 0x7
+#define SPM_CREATE 0x65
+#define SPM_CHANGE 0x66
+#define SPM_DELETE 0x67
 
 #define POLICY_LIST "/home/jeewon/Desktop/policy_list"
 

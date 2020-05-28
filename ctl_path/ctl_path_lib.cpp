@@ -89,14 +89,14 @@ int spm_send_cmd(int fd, char* buffer, int node_size, char* response, int pid, s
     int keyLen = 0, inLen = 0, macLen = 0;
 
     //print_title("Test SEED CMAC - 1");
-
+/*
     keyLen = asc2hex(key, "CAEE9E66F060D74BDA1C7636F765FFB5");
     inLen = asc2hex(in, "");
 
     macLen = 8;
 
     print_result("SEED Generate_CMAC", SEED_Generate_CMAC(mac, macLen, in, inLen, key));
-
+*/
     
     //print_hex("key", key, keyLen);
     //print_hex("in", in, inLen);
