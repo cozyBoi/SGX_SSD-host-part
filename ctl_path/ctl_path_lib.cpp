@@ -25,6 +25,7 @@
 
 #include "ctl_path_lib.h"
 #include "KISA_SEED_CMAC.h"
+#include "KISA_SHA256.h"
 //#include<dumpcode.h>
 
 
