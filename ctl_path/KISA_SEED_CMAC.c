@@ -552,3 +552,30 @@ void print_result(const char *func, int ret)
         printf("================================================\n");
     }
 }
+
+int asc2hex(unsigned char *dst, const char *src)
+{
+    unsigned char temp = 0x00;
+    int i = 0;
+
+    while (src[i] != 0x00)
+    {
+        temp = 0x00;
+
+        if ((src[i] >= 0x30) && (src[i] <= 0x39))
+            temp = src[i] - '0';
+        else if ((src[i] >= 0x41) && (src[i] <= 0x5A))
+            temp = src[i] - 'A' + 10;
+        else if ((src[i] >= 0x61) && (src[i] <= 0x7A))
+            temp = src[i] - 'a' + 10;
+        else
+            temp = 0x00;
+
+        (i & 1) ? (dst[i >> 1] ^= temp & 0x0F) : (dst[i >> 1] = 0, dst[i >> 1] = temp << 4);
+
+        i++;
+    }
+
+    return ((i + 1) / 2);
+}
+

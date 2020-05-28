@@ -18,6 +18,7 @@ int SEED_Verify_CMAC(unsigned char *pMAC, int macLen, unsigned char *pIn, int in
 void print_title(const char *title);
 void print_hex(const char *valName, const unsigned char *data, const int dataLen);
 void print_result(const char *func, int ret);
+int asc2hex(unsigned char *dst, const char *src);
 #ifdef __cplusplus
 }
 #endif
