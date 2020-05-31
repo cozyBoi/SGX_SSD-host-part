@@ -687,7 +687,7 @@ void ata_tf_to_fis(const struct ata_taskfile *tf, u8 pmp, int is_cmd, u8 *fis)
                     break;
                 case SPM_DELETE:
                     break;
-                case default:
+                default:
                     printk("ata : invalid command");
             }
             
