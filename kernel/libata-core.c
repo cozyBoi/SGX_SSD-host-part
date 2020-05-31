@@ -603,7 +603,7 @@ int atapi_cmd_type(u8 opcode)
 //here is DiskShield Code. All releated Variable and function start from "DS_"
 void ata_tf_to_fis(const struct ata_taskfile *tf, u8 pmp, int is_cmd, u8 *fis)
 {
-    printk("ata init!\n");
+    //printk("ata init!\n");
     KEY_LBA_HASH* cur_map=NULL;
     //RECOVERY_HASH* rec_map=NULL;
     unsigned long DS_lba;
@@ -643,7 +643,7 @@ void ata_tf_to_fis(const struct ata_taskfile *tf, u8 pmp, int is_cmd, u8 *fis)
      fis[19] = (tf->auxiliary >> 24) & 0xff;
      */
     //////DiskShield
-    printk("where1\n");
+    //printk("where1\n");
     //Get LBA from fis, and extracts the hash table elements.
     int tp=0;
     if((fis[7]&15)==0){ //48bit
@@ -656,7 +656,7 @@ void ata_tf_to_fis(const struct ata_taskfile *tf, u8 pmp, int is_cmd, u8 *fis)
         //		printk("32b");
         DS_lba=fis[4] | (fis[5]<<8) | (fis[6]<<16) | ((fis[7]&15)<<24);
     }
-    printk("where2\n");
+    //printk("where2\n");
     unsigned int recovery_time = 0;
     if((fis[7]>>4)==0xe){
         rcu_read_lock();
@@ -664,6 +664,7 @@ void ata_tf_to_fis(const struct ata_taskfile *tf, u8 pmp, int is_cmd, u8 *fis)
             if(cur_map->lba==DS_lba){
                 //	lba_chk=1; value=cur_map->value; call=cur_map->call; break;
                 lba_chk=1; fd=cur_map->fd; cmd=cur_map->cmd;
+                printk("[ata] cmd %d\n", cur_map->cmd);
                 //double kernel_t;
                 //struct timerspec kernel_clk;
                 //clock_gettime(CLOCK_MONOTONIC, &kernel_clk);
@@ -672,9 +673,10 @@ void ata_tf_to_fis(const struct ata_taskfile *tf, u8 pmp, int is_cmd, u8 *fis)
                 break;
             }
         }
-        printk("where3\n");
+        //printk("where3\n");
         //put the parameter to the fis
         if(lba_chk){ //DS의 write
+            printk("[ata] cmd %d\n", cmd);
             switch (cmd) {
                 case SPM_CREATE:
                     printk("ata : [SPM] Policy Create.");

@@ -1201,6 +1201,11 @@ static ssize_t enc_sync_op(struct file *filp, char __user *buf, size_t len, loff
     cur_map->fd = ds_param->fd;
     cur_map->cmd = ds_param->cmd;
     cur_map->ret_time = ds_param->ret_time;
+    printk("[open] curr map : ");
+    printk("lba %d fd %d cmd %d ret %d\n", cur_map->lba, cur_map->fd, cur_map->cmd, cur_map->ret_time);
+    printk("[open] ds_param : ");
+    printk("lba %d fd %d cmd %d\n", (*ppos)>>9, ds_param->fd, ds_param->cmd);
+    
     
     /////table add
     //who is key?? --> LBA (offset>>9)
