@@ -69,6 +69,8 @@ int spm_send_cmd(int fd, char* buffer, int node_size, char* response, int pid, s
     int cmd = ds_param->cmd = sp->cmd;
     ds_param->fd = fd;
     ds_param->offset = offset;
+    ds_param->size = 0;
+    ds_param->ret_time = sp->ret_time;
     
     //ds_param->size = (((node_size + 8)+SECTOR_SIZE-1) >> SECTOR_BIT) << SECTOR_BIT;
     

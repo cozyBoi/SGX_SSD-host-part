@@ -1281,6 +1281,7 @@ SYSCALL_DEFINE3(enc_rdafwr, char __user *, u_ds_param, char __user *, buf, size_
     
     //copy data from user space
     copy_from_user((char*)ds_param, u_ds_param, sizeof(DS_PARAM));
+    printk("[open] : cmd %d, fd %d, size %d, offset %d, ret_time %d\n", ds_param->cmd, ds_param->fd, ds_param->size,ds_param->offset,ds_param->ret_time);
     printk("[SPM] cmd : %x\n", ds_param->cmd);
     //Get version from user buffer
     /*
