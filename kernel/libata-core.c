@@ -603,6 +603,7 @@ int atapi_cmd_type(u8 opcode)
 //here is DiskShield Code. All releated Variable and function start from "DS_"
 void ata_tf_to_fis(const struct ata_taskfile *tf, u8 pmp, int is_cmd, u8 *fis)
 {
+    printk("ata init!\n");
     KEY_LBA_HASH* cur_map=NULL;
     //RECOVERY_HASH* rec_map=NULL;
     unsigned long DS_lba;
@@ -642,6 +643,7 @@ void ata_tf_to_fis(const struct ata_taskfile *tf, u8 pmp, int is_cmd, u8 *fis)
      fis[19] = (tf->auxiliary >> 24) & 0xff;
      */
     //////DiskShield
+    printk("where1\n");
     //Get LBA from fis, and extracts the hash table elements.
     int tp=0;
     if((fis[7]&15)==0){ //48bit
@@ -654,6 +656,7 @@ void ata_tf_to_fis(const struct ata_taskfile *tf, u8 pmp, int is_cmd, u8 *fis)
         //		printk("32b");
         DS_lba=fis[4] | (fis[5]<<8) | (fis[6]<<16) | ((fis[7]&15)<<24);
     }
+    printk("where2\n");
     unsigned int recovery_time = 0;
     if((fis[7]>>4)==0xe){
         rcu_read_lock();
@@ -669,7 +672,7 @@ void ata_tf_to_fis(const struct ata_taskfile *tf, u8 pmp, int is_cmd, u8 *fis)
                 break;
             }
         }
-        
+        printk("where3\n");
         //put the parameter to the fis
         if(lba_chk){ //DS의 write
             switch (cmd) {
@@ -684,6 +687,8 @@ void ata_tf_to_fis(const struct ata_taskfile *tf, u8 pmp, int is_cmd, u8 *fis)
                     break;
                 case SPM_DELETE:
                     break;
+                case default:
+                    printk("ata : invalid command");
             }
             
             //diskshield code

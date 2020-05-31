@@ -1177,6 +1177,7 @@ static void enc_convert_RD_cmd(DS_PARAM *ds_param)
 
 static ssize_t enc_sync_op(struct file *filp, char __user *buf, size_t len, loff_t *ppos, DS_PARAM *ds_param)
 {
+    printk("enc_sync_op init!\n");
     //iov has user data information
     struct iovec iov = { .iov_base = buf, .iov_len = len };
     //kiocb has position(offset) information
@@ -1209,6 +1210,7 @@ static ssize_t enc_sync_op(struct file *filp, char __user *buf, size_t len, loff
     //////////////////////////
     
     //doit!
+    printk("call write iter!\n");
     ret = call_write_iter(filp, &kiocb, &iter);
     BUG_ON(ret == -EIOCBQUEUED);
     
