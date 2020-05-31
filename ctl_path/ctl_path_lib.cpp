@@ -58,7 +58,7 @@ int enc_rdafwr(DS_PARAM *ds_param, char* u_buf, char* response, int count)
 //fileID는 write할때 필요한거라 여기에선 필요가 없음
 int spm_send_cmd(int fd, char* buffer, int node_size, char* response, int pid, spm_param*sp)
 {
-    uint64_t offset = 0;
+    uint64_t offset = 9999;
     uint32_t ret_msg;
     uint32_t file_size = node_size;
     uint32_t reserved;
