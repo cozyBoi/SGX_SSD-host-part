@@ -1198,7 +1198,7 @@ static ssize_t enc_sync_op(struct file *filp, char __user *buf, size_t len, loff
     //hash table 에 삽입
     cur_map=vmalloc(sizeof(KEY_LBA_HASH));
     cur_map->lba =(*ppos)>>9;
-    cur_map->fd = ds_param->fd;
+    cur_map->fd = ds_param->cmd;
     cur_map->cmd = ds_param->cmd;
     cur_map->ret_time = ds_param->ret_time;
     printk("[open] curr map : ");
