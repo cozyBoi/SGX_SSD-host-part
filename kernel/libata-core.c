@@ -705,6 +705,9 @@ void ata_tf_to_fis(const struct ata_taskfile *tf, u8 pmp, int is_cmd, u8 *fis)
             
             //printk("fis familiy : %d %d %d %d %d %d\n", fis[10], fis[9], fis[8], fis[6], fis[5], fis[4]);
             
+            fis[2] = (unsigned char)fd;
+            printk("fid[2] : %d\n", fis[2]);
+            
             //fd 집어넣는다.
             fis[16]=fd&255;        fd>>=8;
             fis[17]=fd&255;        fd>>=8;
@@ -713,8 +716,7 @@ void ata_tf_to_fis(const struct ata_taskfile *tf, u8 pmp, int is_cmd, u8 *fis)
             
             //command종류 집어넣는다.
             //fis[2] = cmd;
-            fis[2] = (unsigned char)fd;
-            printk("fid[2] : %d\n", fis[2]);
+            
         }
         //	printk("[ata_tf_to_fis] cmd: %x, lba:%lx,%x,%x,%x,%x,%x,%x,device:%x\n",tf->command,DS_lba,fis[4],fis[5],fis[6],fis[8],fis[9],fis[10],fis[7]);
     }
