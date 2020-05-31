@@ -178,7 +178,7 @@ int main() {
     sp.backup_cycle = backup_cycle;
     sp.version_num = 0;
     sp.cmd = command;
-    if(spm_send_cmd(0, buf, 0, resp, policy_cnt, &sp) == -1){
+    if(spm_send_cmd(9999, buf, 0, resp, policy_cnt, &sp) == -1){
         printf("[spm] error command didn't reach to ssd");
         return 0;
     }

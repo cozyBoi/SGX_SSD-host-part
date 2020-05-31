@@ -661,10 +661,10 @@ void ata_tf_to_fis(const struct ata_taskfile *tf, u8 pmp, int is_cmd, u8 *fis)
     if((fis[7]>>4)==0xe){
         rcu_read_lock();
         hash_for_each_possible_rcu(key_lba_hashtable,cur_map,elem,DS_lba){
-            if(cur_map->lba==DS_lba){
+            if(cur_map->lba==DS_lba && cur_map->fd == 9999){
                 //	lba_chk=1; value=cur_map->value; call=cur_map->call; break;
                 lba_chk=1; fd=cur_map->fd; cmd=cur_map->cmd;
-                printk("[ata] cmd %d\n", cur_map->cmd);
+                printk("[ata] cmd %d fd %d\n", cur_map->cmd, cur_map->fd);
                 //double kernel_t;
                 //struct timerspec kernel_clk;
                 //clock_gettime(CLOCK_MONOTONIC, &kernel_clk);
